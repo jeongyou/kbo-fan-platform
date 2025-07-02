@@ -107,6 +107,7 @@ export default function TicketGenerator({ team }: TicketGeneratorProps) {
   const [ticketType, setTicketType] = useState<"attendance" | "tv" | null>(null)
   const [currentGame, setCurrentGame] = useState<GameSchedule | null>(null)
   const [timeRemaining, setTimeRemaining] = useState<string>("")
+  const [isGenerating, setIsGenerating] = useState(false)
 
   // Mock game schedule - 실제로는 API에서 가져올 데이터
   const todayGames: GameSchedule[] = [
@@ -185,45 +186,44 @@ export default function TicketGenerator({ team }: TicketGeneratorProps) {
       return
     }
 
-    setTicketType(type)
-    setShowTicket(true)
+    setIsGenerating(true)
 
-    // Save ticket to localStorage
-    const tickets = JSON.parse(localStorage.getItem("fanTickets") || "[]")
-    const newTicket = {
-      id: Date.now(),
-      type,
-      team: team.id,
-      date: new Date().toISOString().split("T")[0],
-      gameId: currentGame.id,
-      opponent: currentGame.homeTeam === team.id ? currentGame.awayTeam : currentGame.homeTeam,
-      stadium: currentGame.stadium,
-      createdAt: new Date().toISOString(),
-    }
+    setTimeout(() => {
+      setTicketType(type)
+      setShowTicket(true)
+      setIsGenerating(false)
 
-    console.log("새 티켓 생성:", newTicket)
+      // Save ticket to localStorage
+      const tickets = JSON.parse(localStorage.getItem("fanTickets") || "[]")
+      const newTicket = {
+        id: Date.now(),
+        type,
+        team: team.id,
+        date: new Date().toISOString().split("T")[0],
+        gameId: currentGame.id,
+        opponent: currentGame.homeTeam === team.id ? currentGame.awayTeam : currentGame.homeTeam,
+        stadium: currentGame.stadium,
+        createdAt: new Date().toISOString(),
+      }
 
-    tickets.push(newTicket)
-    localStorage.setItem("fanTickets", JSON.stringify(tickets))
+      tickets.push(newTicket)
+      localStorage.setItem("fanTickets", JSON.stringify(tickets))
 
-    // Add to calendar
-    const calendarEntries = JSON.parse(localStorage.getItem(`fanCalendar_${team.id}`) || "[]")
-    const calendarEntry = {
-      id: Date.now() + 1,
-      date: new Date().toISOString().split("T")[0],
-      type: "ticket",
-      title: type === "attendance" ? "직관 티켓 발급" : "TV 시청 티켓 발급",
-      content: `${currentGame.stadium}에서 경기 ${type === "attendance" ? "직관" : "TV 시청"}`,
-      emotion: "excited",
-      ticketId: newTicket.id,
-    }
+      // Add to calendar
+      const calendarEntries = JSON.parse(localStorage.getItem(`fanCalendar_${team.id}`) || "[]")
+      const calendarEntry = {
+        id: Date.now() + 1,
+        date: new Date().toISOString().split("T")[0],
+        type: "ticket",
+        title: type === "attendance" ? "직관 티켓 발급" : "TV 시청 티켓 발급",
+        content: `${currentGame.stadium}에서 경기 ${type === "attendance" ? "직관" : "TV 시청"}`,
+        emotion: "excited",
+        ticketId: newTicket.id,
+      }
 
-    console.log("캘린더 엔트리 생성:", calendarEntry)
-
-    calendarEntries.push(calendarEntry)
-    localStorage.setItem(`fanCalendar_${team.id}`, JSON.stringify(calendarEntries))
-
-    console.log("티켓 발급 완료")
+      calendarEntries.push(calendarEntry)
+      localStorage.setItem(`fanCalendar_${team.id}`, JSON.stringify(calendarEntries))
+    }, 1000)
   }
 
   const downloadTicket = () => {
@@ -358,18 +358,20 @@ export default function TicketGenerator({ team }: TicketGeneratorProps) {
               size="sm"
               className="w-full bg-green-600 hover:bg-green-700"
               onClick={() => generateTicket("attendance")}
+              disabled={isGenerating}
             >
               <MapPin className="w-3 h-3 mr-1" />
-              직관 티켓 발급
+              {isGenerating ? "발급 중..." : "직관 티켓 발급"}
             </Button>
             <Button
               size="sm"
               variant="outline"
               className="w-full bg-white hover:bg-gray-50"
               onClick={() => generateTicket("tv")}
+              disabled={isGenerating}
             >
               <Tv className="w-3 h-3 mr-1" />
-              TV 시청 티켓 발급
+              {isGenerating ? "발급 중..." : "TV 시청 티켓 발급"}
             </Button>
           </div>
         </CardContent>

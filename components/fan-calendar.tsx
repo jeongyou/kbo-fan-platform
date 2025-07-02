@@ -80,6 +80,7 @@ export default function FanCalendar({ team }: FanCalendarProps) {
   const [selectedDateEntries, setSelectedDateEntries] = useState<CalendarEntry[]>([])
   const [newEntry, setNewEntry] = useState({ title: "", content: "", emotion: "happy" as const })
   const [showAddEntry, setShowAddEntry] = useState(false)
+  const [selectedGameEntry, setSelectedGameEntry] = useState<CalendarEntry | null>(null)
 
   // Mock game schedule for demonstration - 팀별로 다른 상대팀과 경기
   const getMockGameSchedule = (teamId: string) => {
@@ -487,7 +488,7 @@ export default function FanCalendar({ team }: FanCalendarProps) {
               <p className="text-gray-600 mb-4">경기 감상평이나 직관 후기를 남겨보세요!</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
               {entries
                 .slice(-5)
                 .reverse()
@@ -495,7 +496,19 @@ export default function FanCalendar({ team }: FanCalendarProps) {
                   const ticketInfo = entry.ticketId ? getTicketInfo(entry.ticketId) : null
 
                   return (
-                    <div key={entry.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={entry.id}
+                      className={`flex items-start gap-3 p-3 bg-gray-50 rounded-lg ${
+                        entry.type === "win" || entry.type === "lose"
+                          ? "cursor-pointer hover:bg-gray-100 transition-colors"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        if (entry.type === "win" || entry.type === "lose") {
+                          setSelectedGameEntry(entry)
+                        }
+                      }}
+                    >
                       {getEntryIcon(entry)}
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
@@ -536,73 +549,77 @@ export default function FanCalendar({ team }: FanCalendarProps) {
           <div className="space-y-4">
             {/* Existing Entries */}
             {selectedDateEntries.length > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-60 overflow-y-auto">
                 <h4 className="font-medium text-sm">이날의 기록</h4>
-                {selectedDateEntries.map((entry) => {
-                  const ticketInfo = entry.ticketId ? getTicketInfo(entry.ticketId) : null
+                <div className="space-y-3 pr-2">
+                  {selectedDateEntries.map((entry) => {
+                    const ticketInfo = entry.ticketId ? getTicketInfo(entry.ticketId) : null
 
-                  return (
-                    <div key={entry.id} className="p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-start gap-2">
-                        {getEntryIcon(entry)}
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-medium text-sm">{entry.title}</span>
-                            {entry.opponent && (
-                              <div className="flex items-center gap-1">
-                                <span className="text-xs">vs</span>
-                                <span className="text-sm">{TEAM_LOGOS[entry.opponent as keyof typeof TEAM_LOGOS]}</span>
+                    return (
+                      <div key={entry.id} className="p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-start gap-2">
+                          {getEntryIcon(entry)}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-medium text-sm">{entry.title}</span>
+                              {entry.opponent && (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs">vs</span>
+                                  <span className="text-sm">
+                                    {TEAM_LOGOS[entry.opponent as keyof typeof TEAM_LOGOS]}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+
+                            {entry.type === "win" || entry.type === "lose" ? (
+                              <div>
+                                {entry.score && (
+                                  <div className="text-sm text-gray-600 mb-1">
+                                    최종 스코어: {entry.score.home} - {entry.score.away}
+                                  </div>
+                                )}
+                                <Badge
+                                  variant="secondary"
+                                  className={
+                                    entry.type === "win" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                  }
+                                >
+                                  {entry.type === "win" ? "승리" : "패배"}
+                                </Badge>
                               </div>
+                            ) : entry.type === "scheduled" ? (
+                              <div>
+                                <div className="text-sm text-gray-600 mb-1">경기 시간: {entry.gameTime}</div>
+                                <div className="text-sm text-gray-600 mb-1">경기장: {entry.stadium}</div>
+                                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                                  예정된 경기
+                                </Badge>
+                              </div>
+                            ) : (
+                              <>
+                                {entry.content && <p className="text-sm text-gray-600 mb-1">{entry.content}</p>}
+                                {ticketInfo && (
+                                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                                    {ticketInfo.type === "attendance" ? (
+                                      <MapPin className="w-3 h-3" />
+                                    ) : (
+                                      <Tv className="w-3 h-3" />
+                                    )}
+                                    <span>{ticketInfo.stadium}</span>
+                                    <Badge variant="outline" className="text-xs">
+                                      {ticketInfo.type === "attendance" ? "직관" : "TV시청"}
+                                    </Badge>
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
-
-                          {entry.type === "win" || entry.type === "lose" ? (
-                            <div>
-                              {entry.score && (
-                                <div className="text-sm text-gray-600 mb-1">
-                                  최종 스코어: {entry.score.home} - {entry.score.away}
-                                </div>
-                              )}
-                              <Badge
-                                variant="secondary"
-                                className={
-                                  entry.type === "win" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                                }
-                              >
-                                {entry.type === "win" ? "승리" : "패배"}
-                              </Badge>
-                            </div>
-                          ) : entry.type === "scheduled" ? (
-                            <div>
-                              <div className="text-sm text-gray-600 mb-1">경기 시간: {entry.gameTime}</div>
-                              <div className="text-sm text-gray-600 mb-1">경기장: {entry.stadium}</div>
-                              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                                예정된 경기
-                              </Badge>
-                            </div>
-                          ) : (
-                            <>
-                              {entry.content && <p className="text-sm text-gray-600 mb-1">{entry.content}</p>}
-                              {ticketInfo && (
-                                <div className="flex items-center gap-2 text-xs text-gray-500">
-                                  {ticketInfo.type === "attendance" ? (
-                                    <MapPin className="w-3 h-3" />
-                                  ) : (
-                                    <Tv className="w-3 h-3" />
-                                  )}
-                                  <span>{ticketInfo.stadium}</span>
-                                  <Badge variant="outline" className="text-xs">
-                                    {ticketInfo.type === "attendance" ? "직관" : "TV시청"}
-                                  </Badge>
-                                </div>
-                              )}
-                            </>
-                          )}
                         </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
             )}
 
@@ -668,6 +685,116 @@ export default function FanCalendar({ team }: FanCalendarProps) {
               </div>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Game Detail Dialog */}
+      <Dialog open={!!selectedGameEntry} onOpenChange={() => setSelectedGameEntry(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>경기 상세 요약</DialogTitle>
+          </DialogHeader>
+
+          {selectedGameEntry && (
+            <div className="space-y-4">
+              {/* Game Header */}
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-4 mb-2">
+                  <div className="text-center">
+                    <div className="text-2xl mb-1">{team.logo}</div>
+                    <div className="text-sm font-medium">{team.name}</div>
+                  </div>
+                  <div className="text-xl text-gray-400">VS</div>
+                  <div className="text-center">
+                    <div className="text-2xl mb-1">
+                      {TEAM_LOGOS[selectedGameEntry.opponent as keyof typeof TEAM_LOGOS]}
+                    </div>
+                    <div className="text-sm font-medium">상대팀</div>
+                  </div>
+                </div>
+                <div className="text-sm text-gray-600">
+                  {selectedGameEntry.date} · {selectedGameEntry.stadium}
+                </div>
+              </div>
+
+              {/* Game Result */}
+              <div className="text-center">
+                <Badge
+                  variant="secondary"
+                  className={`text-lg px-4 py-2 ${
+                    selectedGameEntry.type === "win" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {selectedGameEntry.type === "win" ? "승리" : "패배"}
+                </Badge>
+                {selectedGameEntry.score && (
+                  <div className="text-2xl font-bold mt-2">
+                    {selectedGameEntry.score.home} - {selectedGameEntry.score.away}
+                  </div>
+                )}
+              </div>
+
+              {/* Game Highlights */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-gray-800">🔥 주요 하이라이트</h4>
+                <div className="space-y-2">
+                  {selectedGameEntry.type === "win"
+                    ? [
+                        "3회초 김민수의 2점 홈런으로 역전!",
+                        "7회말 박준호의 결승 타점으로 승부 결정",
+                        "마무리 투수 이성민 완벽 마무리",
+                      ]
+                    : [
+                        "초반 실점으로 어려운 경기 전개",
+                        "8회말 추격했지만 아쉽게 역부족",
+                        "다음 경기에서 설욕 기대",
+                      ].map((highlight, index) => (
+                        <div key={index} className="text-sm text-gray-700 pl-4 border-l-2 border-green-200">
+                          {highlight}
+                        </div>
+                      ))}
+                </div>
+              </div>
+
+              {/* MVP */}
+              <div className="bg-yellow-50 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="text-lg">🏆</div>
+                  <span className="font-semibold text-yellow-800">
+                    {selectedGameEntry.type === "win" ? "오늘의 MVP" : "선전한 선수"}
+                  </span>
+                </div>
+                <div className="text-sm">
+                  <div className="font-medium">
+                    {selectedGameEntry.type === "win" ? "김민수 (외야수)" : "박준호 (내야수)"}
+                  </div>
+                  <div className="text-gray-600">
+                    {selectedGameEntry.type === "win" ? "3타수 2안타 2타점 1홈런" : "4타수 2안타 1타점"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Game Stats */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="bg-gray-50 rounded p-3">
+                  <div className="font-medium mb-1">경기 정보</div>
+                  <div className="text-gray-600">
+                    <p>• 관중: {Math.floor(Math.random() * 10000) + 10000}명</p>
+                    <p>• 경기시간: 3시간 {Math.floor(Math.random() * 30) + 10}분</p>
+                    <p>• 날씨: 맑음, 기온 {Math.floor(Math.random() * 10) + 15}°C</p>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <div className="font-medium mb-1">팀 기록</div>
+                  <div className="text-gray-600">
+                    <p>• 안타: {Math.floor(Math.random() * 5) + 8}개</p>
+                    <p>• 실책: {Math.floor(Math.random() * 3)}개</p>
+                    <p>• 잔루: {Math.floor(Math.random() * 8) + 3}명</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
