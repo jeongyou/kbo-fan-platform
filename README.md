@@ -1,30 +1,135 @@
-# Kbo fan platform
+# 야구플래닛 - KBO 팬 플랫폼
+[아구플래닛 링크](https://v0-kbo-fan-platform.vercel.app/)
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+## 🎯 페르소나
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/jeongyous-projects/v0-kbo-fan-platform)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/pOConSqCF5S)
+### 야구 입문자 - 김민수 (25세)
 
-## Overview
+- 직업: 대기업 마케팅팀 사원
+- 라이프스타일: 회사 동료들과의 관계 중시, 새로운 취미 탐색 중
+- 목표: 야구를 통해 동료들과 공통 화제 만들기, 새로운 재미 발견
+- 니즈: 야구 기초 지식 습득, 쉬운 용어 설명, 팀 선택 가이드
+- 페인 포인트: 복잡한 야구 규칙, 어려운 전문 용어, 어떤 팀을 응원할지 모름
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+### 열성 팬 - 박영희 (42세)
 
-## Deployment
+- 직업: 중학교 교사
+- 라이프스타일: 주말마다 직관, 야구 관련 SNS 활동 활발
+- 목표: 팀 응원을 통한 스트레스 해소, 같은 팬들과의 소통
+- 니즈: 실시간 경기 정보, 선수 통계, 팬 커뮤니티 참여
+- 페인 포인트: 흩어진 정보들, 팬들과의 소통 창구 부족
 
-Your project is live at:
+### 캐주얼 팬 - 이지은 (28세)
 
-**[https://vercel.com/jeongyous-projects/v0-kbo-fan-platform](https://vercel.com/jeongyous-projects/v0-kbo-fan-platform)**
+- 직업: 프리랜서 디자이너
+- 라이프스타일: 집에서 TV 시청 선호, 감성적 경험 중시
+- 목표: 가벼운 재미와 힐링, 예쁜 기념품 수집
+- 니즈: 간편한 정보 확인, 예쁜 디지털 굿즈, 감정 기록
+- 페인 포인트: 너무 전문적인 정보, 복잡한 인터페이스
 
-## Build your app
+## 📱 사용자 시나리오 및 스토리
 
-Continue building your app on:
+### 야구 입문자의 첫 경험
 
-**[https://v0.dev/chat/projects/pOConSqCF5S](https://v0.dev/chat/projects/pOConSqCF5S)**
+상황: 김민수가 동료들의 야구 이야기에 끼고 싶어서 야구에 관심을 갖게 됨
 
-## How It Works
+사용자 시나리오:
+1. 야구플래닛 접속 후 팀 선택 화면에서 고민
+2. 각 팀의 특징을 보고 두산 베어스 선택
+3. "입문자 모드" 활성화로 쉬운 설명 확인
+4. 오늘 경기 요약에서 하이라이트 용어에 마우스 오버하여 설명 확인
+5. 용어사전에서 "홈런", "타점" 등 기본 용어 학습
+6. 커뮤니티에서 다른 입문자들의 질문과 답변 확인
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+사용자 스토리:
+"야구 초보자로서, 저는 어려운 용어 없이 쉽게 야구를 이해하고 싶습니다. 그래서 동료들과 야구 이야기를 나눌 수 있습니다."
+
+인수 조건:
+- Given: 사용자가 입문자 모드를 활성화했을 때
+- When: 야구 용어가 포함된 텍스트를 확인할 때
+- Then: 해당 용어에 대한 쉬운 설명이 툴팁으로 제공된다
+
+### 열성 팬의 일상 루틴
+
+상황: 박영희가 아침에 일어나서 어제 경기 결과를 확인하고 오늘 직관 준비를 함
+
+사용자 시나리오:
+1. 아침에 야구플래닛 접속하여 어제 경기 결과 확인
+2. MVP와 주요 하이라이트를 통해 경기 흐름 파악
+3. 오늘 직관 예정이라 "직관 티켓" 발급받아 기념
+4. 팬 캘린더에 직관 계획과 기대감 기록
+5. 커뮤니티에서 같은 경기 가는 팬들과 소통
+6. 응원하는 선수(양의지)의 최근 성적 확인
+
+사용자 스토리:
+"열성 팬으로서, 저는 우리 팀의 모든 정보를 빠짐없이 확인하고 다른 팬들과 열정을 나누고 싶습니다. 그래서 더 깊이 있는 응원을 할 수 있습니다."
+
+인수 조건:
+- Given: 사용자가 경기 당일에 접속했을 때
+- When: 티켓 발급 버튼을 클릭했을 때
+- Then: 실시간으로 개인화된 디자인의 티켓이 생성되고 캘린더에 자동 저장된다
+
+### 캐주얼 팬의 힐링 타임
+
+상황: 이지은이 주말 저녁에 집에서 편안하게 야구 시청하며 힐링하는 시간
+
+사용자 시나리오:
+1. TV로 야구 시청하면서 야구플래닛 접속
+2. "TV 시청 티켓" 발급받아 예쁜 디자인 감상
+3. 재미있는 장면이 나오면 캘린더에 감정과 함께 간단히 기록
+4. 티켓 컬렉션에서 지금까지 모은 티켓들 구경
+5. 커뮤니티에서 재미있는 사진이나 후기 구경
+6. 마음에 드는 게시글에 좋아요 누르기
+
+사용자 스토리:
+"캐주얼 팬으로서, 저는 부담 없이 야구를 즐기고 예쁜 기념품을 모으고 싶습니다. 그래서 일상에 작은 재미와 힐링을 더할 수 있습니다."
+
+인수 조건:
+- Given: 사용자가 TV 시청 중일 때
+- When: TV 시청 티켓을 발급받을 때
+- Then: 팀 컬러가 반영된 아름다운 디자인의 티켓이 생성되고 컬렉션에 추가된다
+
+## 💡 핵심 가치 제안
+
+### 개인화된 팬 경험
+각 사용자의 레벨과 관심사에 맞춘 맞춤형 야구 경험 제공
+
+### 감정적 연결 강화
+디지털 티켓과 캘린더를 통한 야구 추억 저장 및 관리
+
+### 커뮤니티 기반 소통
+같은 팀을 응원하는 팬들 간의 자연스러운 소통 환경 조성
+
+### 학습과 재미의 균형
+입문자도 쉽게 접근할 수 있으면서도 깊이 있는 정보 제공
+
+## 🛠 핵심 기능
+
+### 스마트 팀 선택 시스템
+사용자 성향에 맞는 팀 추천 및 개인화된 경험 시작점
+
+### 실시간 티켓 발급 시스템
+경기 시청 순간을 기념할 수 있는 개인화된 디지털 굿즈 생성
+
+### 적응형 정보 제공
+입문자 모드를 통한 난이도별 정보 제공 및 학습 지원
+
+### 감정 기반 캘린더
+단순한 일정 관리를 넘어선 감정과 추억이 담긴 개인 야구 다이어리
+
+### 선수 중심 팬 경험
+응원하는 선수를 중심으로 한 개인화된 정보 및 커뮤니티 경험
+
+## 📊 구현 범위
+
+### 프론트엔드 중심 프로토타입
+실제 API 연동 없이 로컬 스토리지 기반의 완전한 사용자 경험 구현
+
+### 반응형 웹 애플리케이션
+모바일과 데스크톱 모든 환경에서 최적화된 사용자 인터페이스
+
+### 실시간 상호작용 시뮬레이션
+목업 데이터를 활용한 실제와 유사한 동적 콘텐츠 경험
+
+### 개인화 데이터 관리
+사용자 선택과 활동 기록의 지속적인 저장 및 활용
