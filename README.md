@@ -1,3 +1,6 @@
+이슈가 있는 이전 레포 주소
+https://github.com/jeongyou/kbo-planet
+
 # 야구플래닛 - KBO 팬 플랫폼
 [아구플래닛 링크](https://v0-kbo-fan-platform.vercel.app/)
 
